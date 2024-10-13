@@ -2,23 +2,24 @@
 session_start();
 include("db.php");
 
-if($_SERVER["REQUEST_METHOD"]=="POST") {
-    $username=$_POST['username'];
-    $password=$_POST['password'];
+if($_SERVER["REQUEST_METHOD"] == "POST") {
+    if(isset($_POST['username']) && isset($_POST['password'])) {
+        $username = $_POST['username'];
+        $password = $_POST['password'];
 
-    $sql = "INSERT INTO users (username, password) VALUES('$username', '$password')";
+        $sql = "INSERT INTO users (username, password) VALUES ('$username', '$password')";
 
-if($conn->query($sql)===TRUE) {
-    $message="REGISTERED SUCCESFULLY";
-} else {
-    $message="FAILED TO REGISTER.";
+        if($conn->query($sql) === TRUE) {
+            $message = "SUCCESSFULLY REGISTERED"; 
+        } else {
+            $message = "FAILED TO REGISTER: " . $conn->error;
+        }
+    }
 }
 
+if(isset($_SESSION['username'])){
+    $message = "WELCOME " . $_SESSION['username'];
 }
-
-if(isset($_SESSION['username'])) {
-    $message="WELCOME " . $_SESSION['username'];
-} 
 ?>
 
 <!DOCTYPE html>
@@ -30,17 +31,19 @@ if(isset($_SESSION['username'])) {
 </head>
 <body>
     <h1>REGISTER PAGE</h1>
-    <!--PHP SET-->
+    <!--PHP-->
     <?php if(isset($message)): ?>
         <h1><?php echo $message ?></h1>
     <?php endif; ?>
+
     <!--REGISTER-->
     <form method="post" action="register.php">
-        Username:<input type="text" name="username" required>
-        Password:<input type="password" name="password" required>
+        Username: <input type="text" name="username" required>
+        Password: <input type="password" name="password" required>
         <input type="submit" value="REGISTER">
     </form>
-    <!--LOGIN-->  
+
+    <!--LOGIN-->
     <form action="login.php">
         <input type="submit" value="LOGIN">
     </form>
